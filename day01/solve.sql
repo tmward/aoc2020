@@ -1,3 +1,4 @@
+/* To run: sqlite3 < solve.sql */
 /* Load data into table expenses */
 .headers on
 .mode csv
