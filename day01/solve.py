@@ -9,7 +9,7 @@ with open('input.txt', 'r') as ifile:
 print("Part 1's answer:")
 for a, b in combinations(nums, 2):
     if a + b == 2020:
-        print(a + b)
+        print(a * b)
         break
 
 print("Part 2's answer:")
