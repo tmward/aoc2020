@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import re
-from functools import reduce
-from pprint import pprint
 
 # lines formatted min-max letter: password
 pattern = re.compile(r"^\s*(\d+)\-(\d+)\s+([a-zA-Z]):\s+([a-zA-Z]+)\s*$")
