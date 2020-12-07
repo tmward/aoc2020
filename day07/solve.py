@@ -8,14 +8,17 @@ def color_and_n(bag_spec):
     # remove trailing ',' or 's' so we can slice off r" bags?\.?" using indexing
     # use split(maxsplit=1) so it splits off num from two word color
     n, color = bag_spec.rstrip('s.')[:-4].split(maxsplit=1)
-    return (color, n)
+    return (color, int(n))
 
 
 obag_to_ibag_to_ns = {}
 with open("input.txt", "r") as ifile:
     for line in ifile:
         obag, bag_specs = line.strip().split(" bags contain ")
-        obag_to_ibag_to_ns[obag] = dict(color_and_n(bag_spec) for bag_spec in bag_specs.split(", "))
+        if bag_specs == 'no other bags.':
+            obag_to_ibag_to_ns[obag] = {}
+        else:
+            obag_to_ibag_to_ns[obag] = dict(color_and_n(bag_spec) for bag_spec in bag_specs.split(", "))
 
 def obag_holds_ibag(obag_spec, ibag):
     return [obag for obag, ibag_to_ns in obag_spec.items() if ibag in ibag_to_ns]
@@ -29,5 +32,16 @@ while bags_hold_gold:
     accumulator.append(bag)
     bags_hold_gold.extend(bags_that_hold(bag))
 
-print("Part 1 answer: ", len(set(accumulator)))
+print(f"Part 1 answer: {len(set(accumulator))}")
+
+queue = deque(["shiny gold"])
+total_held_bags = 0
+while queue:
+    bag = queue.popleft()
+    for ibag, n in obag_to_ibag_to_ns[bag].items():
+        total_held_bags += n
+        queue.extend([ibag] * n)
+
+print(f"Part 2 answer: {total_held_bags}")
+
 
