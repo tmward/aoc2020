@@ -23,6 +23,8 @@ for i in range(len(ns) - 1):
     seq = ns[i:]
     for a in range(2, len(seq)):
         run = seq[:a]
-        if sum(run) == weakness:
+        if (run_sum := sum(run)) > weakness:
+            break
+        if run_sum == weakness:
             print(f"Part 2 solution: {min(run) + max(run)}")
             exit()
