@@ -17,8 +17,9 @@ for i, n in enumerate(nums_sorted):
 diffs_counted = Counter(diffs)
 print(f"Part 1 solution is {diffs_counted.get(1) * diffs_counted.get(3)}")
 
-# add previous 
+# add previous 3 (turns out this is a "tribonacci" sequence)
 n1s_to_npaths = [1, 1, 2, 4, 7, 11]
+
 paths = "".join(str(n) for n in diffs).split("3")
 num_paths = 1
 
