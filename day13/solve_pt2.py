@@ -11,7 +11,9 @@ def get_input(filename):
 
 
 def solve(buses):
-    for t in count(100000000000000):
+    step = max(buses)
+    start = max(buses) * 200000000000
+    for t in count(start, step):
         for offset, bus in enumerate(buses):
             if (t + offset) % bus != 0:
                 break
