@@ -11,15 +11,15 @@ def get_input(filename):
 
 
 def solve(buses):
-    step = max(buses)
-    start = max(buses) * 200000000000
-    for t in count(start, step):
-        for offset, bus in enumerate(buses):
-            if (t + offset) % bus != 0:
-                break
-        else:
-            return t
-
+    n = 1
+    step = 1
+    for i, b in enumerate(buses):
+        print(f"Offset {i} and bus {b}:")
+        n = next(c for c in count(n, step) if (c + i) % b == 0)
+        print(f"n is {n}")
+        step *= b
+        print(f"step now is {step}\n")
+    return n
 
 def main():
     if len(sys.argv) != 2:
