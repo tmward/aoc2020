@@ -14,12 +14,10 @@ def solve(buses):
     n = 1
     step = 1
     for i, b in enumerate(buses):
-        print(f"Offset {i} and bus {b}:")
         n = next(c for c in count(n, step) if (c + i) % b == 0)
-        print(f"n is {n}")
         step *= b
-        print(f"step now is {step}\n")
     return n
+
 
 def main():
     if len(sys.argv) != 2:
