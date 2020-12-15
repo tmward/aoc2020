@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from collections import defaultdict
 
 
 def get_input():
@@ -7,7 +6,7 @@ def get_input():
     return [int(n) for n in puzzle_input.split(",")]
 
 
-def solve_pt_1(starting_ns, end):
+def solve(starting_ns, end):
     counts = {n: turn for turn, n in enumerate(starting_ns[:-1], 1)}
     last_spoken_n = starting_ns[-1]
     for turn in range(len(starting_ns) + 1, end + 1):
@@ -21,10 +20,10 @@ def solve_pt_1(starting_ns, end):
     return last_spoken_n
 
 
-
 def main():
     starting_ns = get_input()
-    print(f"Pt 1 solution: {solve_pt_1(starting_ns, 2020)}")
+    print(f"Pt 1 solution: {solve(starting_ns, 2020)}")
+    print(f"Pt 2 solution: {solve(starting_ns, 30000000)}")
 
 
 if __name__ == "__main__":
