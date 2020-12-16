@@ -1,0 +1,21 @@
+field,min1,max1,min2,max2
+departure location,47,164,179,960
+departure station,49,808,833,968
+departure platform,50,561,567,964
+departure track,29,407,416,954
+departure date,48,317,339,965
+departure time,42,366,390,952
+arrival location,45,292,304,974
+arrival station,26,255,266,951
+arrival platform,47,225,243,957
+arrival track,37,442,452,954
+class,35,120,127,958
+duration,47,642,659,972
+price,39,509,535,962
+route,47,705,729,962
+row,49,480,494,959
+seat,28,846,865,969
+train,30,598,606,968
+type,42,905,924,965
+wagon,29,884,899,973
+zone,39,790,803,969
