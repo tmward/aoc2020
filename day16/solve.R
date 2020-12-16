@@ -16,6 +16,14 @@ validate_values <- function(val) {
         ungroup() 
 }
 
+validate_field <- function(val) {
+    validate_values(val) %>%
+        select(field, valid) %>%
+        mutate(field = str_replace(field, " ", "_")) %>%
+        pivot_wider(names_from = field, values_from = valid)
+
+}
+
 valid_value <- function(val) {
     total_valid <- validate_values(val) %>%
         summarise(sum(valid)) %>%
@@ -31,30 +39,8 @@ tickets %>%
     summarise(pt_1_answer = sum(value))
 
 # Pt 2 solution
-
 tickets %>%
+    slice(168) %>%
     pivot_longer(-ticket, names_to = "field", values_to = "value") %>%
-
-
-
-
-
-
-valid_values <- function(vals) {
-    is_valid  <- rep(FALSE, length(vals))
-    for (i in seq_along(vals)) {
-        for (r in seq(nrow(rules))){
-            if (between(vals[i], rules[[r, 2]], rules[[r, 3]]) && between(vals[i], rules[[r, 4]], rules[[r, 5]])) {
-                is_valid[i] = TRUE
-                break
-            }
-        }
-    }
-    is_valid
-}
-
-vals_to_test <- tickets %>%
-    pivot_longer(-ticket, names_to = "field", values_to = "value") %>%
-    pull(value)
-
-valid_values(vals_to_test)
+    mutate(valid = map(value, validate_field)) %>%
+    unnest(valid)
