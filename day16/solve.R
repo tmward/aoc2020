@@ -49,7 +49,7 @@ validated_tickets %>%
     filter(!valid) %>%
     summarise(pt_1_answer = sum(value))
 
-# Pt 2 solution (W.I.P)
+# Pt 2 solution
 # First remove invalid tickets in the validated_tickets
 valid_tickets <- validated_tickets %>%
     group_by(ticket) %>%
