@@ -9,6 +9,7 @@ tickets <- map_dfr(ticket_files, read_csv, col_names = F) %>%
     rowid_to_column(var = "ticket")
 
 
+# returns tibble of rule, valid checking val if valid for each rule
 validate_values <- function(val) {
     rules %>%
         rowwise() %>%
@@ -16,6 +17,8 @@ validate_values <- function(val) {
         ungroup() 
 }
 
+
+# formats validate_values() tibble wide to one row in size to make unnesting easy
 validate_field <- function(val) {
     validate_values(val) %>%
         select(field, valid) %>%
@@ -24,11 +27,11 @@ validate_field <- function(val) {
 
 }
 
+# checks to see if val works for any of the rules (pt 1 solution requirement)
 valid_value <- function(val) {
-    total_valid <- validate_values(val) %>%
-        summarise(sum(valid)) %>%
+    validate_values(val) %>%
+        summarise(any(valid)) %>%
         pluck(1, 1)
-    total_valid > 0
 }
 
 # Pt 1 solution
@@ -38,9 +41,15 @@ tickets %>%
     filter(!valid) %>%
     summarise(pt_1_answer = sum(value))
 
-# Pt 2 solution
+# Pt 2 solution (W.I.P)
 tickets %>%
-    slice(168) %>%
+    slice(145) %>%
     pivot_longer(-ticket, names_to = "field", values_to = "value") %>%
     mutate(valid = map(value, validate_field)) %>%
-    unnest(valid)
+    unnest(valid) %>%
+    pivot_longer(!c(ticket, field, value), names_to = "field_name", values_to = "valid") %>%
+    group_by(ticket, value) %>%
+    summarise(every_valid = any(valid)) %>%
+    ungroup() %>%
+    filter(!every_valid) %>%
+    summarise(pt_1_solution = sum(value))
