@@ -8,11 +8,16 @@ ticket_files <- c("your_ticket.csv", "nearby_tickets.csv")
 tickets <- map_dfr(ticket_files, read_csv, col_names = F) %>%
     rowid_to_column(var = "ticket")
 
-valid_value <- function(val) {
-    total_valid <- rules %>%
+
+validate_values <- function(val) {
+    rules %>%
         rowwise() %>%
         mutate(valid = between(val, min1, max1) || between(val, min2, max2)) %>%
-        ungroup() %>%
+        ungroup() 
+}
+
+valid_value <- function(val) {
+    total_valid <- validate_values(val) %>%
         summarise(sum(valid)) %>%
         pluck(1, 1)
     total_valid > 0
@@ -24,6 +29,15 @@ tickets %>%
     mutate(valid = map_lgl(value, valid_value)) %>%
     filter(!valid) %>%
     summarise(pt_1_answer = sum(value))
+
+# Pt 2 solution
+
+tickets %>%
+    pivot_longer(-ticket, names_to = "field", values_to = "value") %>%
+
+
+
+
 
 
 valid_values <- function(vals) {
