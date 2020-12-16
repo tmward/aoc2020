@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from itertools import chain
+from itertools import chain, permutations
+from operator import itemgetter
 from pprint import pprint
 import re
 import sys
@@ -39,6 +40,13 @@ def get_input(filename):
     )
 
 
+def valid_ticket(rules, ticket):
+    for value in ticket:
+        if all(value not in valid_ns for valid_ns in rules.values()):
+            return False
+    return True
+
+
 def solve_pt_1(rules, tickets):
     invalid_values = []
     for ticket in tickets:
@@ -48,6 +56,23 @@ def solve_pt_1(rules, tickets):
     return sum(invalid_values)
 
 
+def solve_pt_2(rules, tickets):
+    for order_n_rules in permutations(rules.items(), len(rules)):
+        next_rule = False
+        # order n rules is an ordering of rules of ((field, valid ns),...)
+        # pull out valid ns in their order
+        rules = tuple(map(itemgetter(1), order_n_rules))
+        for ticket in tickets:
+            if next_rule:
+                break
+            for value, valid_nums in zip(ticket, rules): 
+                if value not in valid_nums:
+                    next_rule = True
+                    break
+        else:
+            return order_n_rules
+
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: ./solve.py inputfile")
@@ -55,6 +80,8 @@ def main():
 
     rules, ticket, other_tickets = get_input(sys.argv[1])
     print(f"Pt 1 answer: {solve_pt_1(rules, other_tickets)}")
+    valid_tickets = [ticket for ticket in other_tickets if valid_ticket(rules, ticket)]
+    pprint(solve_pt_2(rules, valid_tickets))
 
 
 if __name__ == "__main__":
