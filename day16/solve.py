@@ -39,13 +39,22 @@ def get_input(filename):
     )
 
 
+def solve_pt_1(rules, tickets):
+    invalid_values = []
+    for ticket in tickets:
+        for value in ticket:
+            if all(value not in valid_ns for valid_ns in rules.values()):
+                invalid_values.append(value)
+    return sum(invalid_values)
+
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: ./solve.py inputfile")
         sys.exit(2)
 
     rules, ticket, other_tickets = get_input(sys.argv[1])
-    pprint(other_tickets)
+    print(f"Pt 1 answer: {solve_pt_1(rules, other_tickets)}")
 
 
 if __name__ == "__main__":
