@@ -2,20 +2,19 @@
 """Day 17 for advent of code solution"""
 from collections import defaultdict
 from copy import deepcopy
-from itertools import product
+from itertools import chain, product
 import sys
 
 
 def get_input(filename):
-    z_to_coords = defaultdict(dict)
+    # credit to TDM for this terror
+    z_to_coords = defaultdict(lambda: defaultdict(lambda: "."))
     with open(filename, "r") as f:
         # return dict with one key, 0 (for z = 0), and x, y coordinates
         # flattened into complex numbers pointing to their values
-        z_to_coords[0] = {
-            complex(c, r): val
-            for r, line in enumerate(f)
-            for c, val in enumerate(line.strip())
-        }
+        for r, line in enumerate(f):
+            for c, val in enumerate(line.strip()):
+                z_to_coords[0][complex(c, r)] = val
     return z_to_coords
 
 
@@ -26,14 +25,14 @@ def print_plane(coords):
         row = []
         for x in range(min(reals), max(reals) + 1):
             row.append(coords[complex(x, y)])
-        print(*row)
+        print(*row, sep = "")
 
 
 def print_planes(z_to_coords, iteration):
     print(f"After {iteration} iteration(s):")
-    for z, coord_to_state in z_to_coords.items():
+    for z in sorted(z_to_coords):
         print(f"z = {z}")
-        print_plane(coord_to_state)
+        print_plane(z_to_coords[z])
 
 
 def neighboring_coords(z, coord):
@@ -47,11 +46,13 @@ def neighboring_coords(z, coord):
 
 def get_state(z_to_coords, z, coord):
     # return empty ('.') if no known state in that area
-    return z_to_coords[z].get(coord, ".")
+    # do not rely on defaultdict behavior since that will then
+    # initialize that value and lead to modification of the
+    # datastructure
+    return z_to_coords.get(z, {}).get(coord, ".")
 
 
 def active(z_to_coords, z, coord):
-    # return empty ('.') if no known state in that area
     return get_state(z_to_coords, z, coord) == "#"
 
 
@@ -63,13 +64,26 @@ def total_active(z_to_coords):
     )
 
 
+def expand_grid(z_to_coords):
+    # this is janky... but since we have nested defaultdicts, if a point
+    # is accessed it'll become "empty". So find all the neighbors of the
+    # current points then check the contents of all the neighbors (and
+    # not do anything with it)
+    neighbors = set()
+    for z in z_to_coords:
+        # coords are same for each z, so just check z = 0
+        for coord in z_to_coords[0]:
+            for neighbor in neighboring_coords(z, coord):
+                neighbors.add(neighbor)
+    for z, coord in neighbors:
+        # abuses defaultdict, woo!
+        z_to_coords[z][coord]
+
+
 def solve_pt_1(z_to_coords):
-    new_z_to_coords = deepcopy(z_to_coords)
-    print_planes(z_to_coords, 0)
-    # TODO: add plane above and below before each cycle
     for _ in range(1, 7):
-        if _ > 1:
-            break
+        expand_grid(z_to_coords)
+        new_z_to_coords = deepcopy(z_to_coords)
         for z, coord_to_state in z_to_coords.items():
             for coord, state in coord_to_state.items():
                 active_neighbors = sum(
@@ -79,9 +93,7 @@ def solve_pt_1(z_to_coords):
                     new_z_to_coords[z][coord] = "#"
                 elif state == "#" and active_neighbors not in (2, 3):
                     new_z_to_coords[z][coord] = "."
-            print("here?")
         z_to_coords = deepcopy(new_z_to_coords)
-        print_planes(z_to_coords, _)
     return total_active(z_to_coords)
 
 
